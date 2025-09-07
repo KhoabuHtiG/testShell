@@ -13,7 +13,7 @@ void clearScreen() {
 
 int main() {
     clearScreen();
-    std::cout << "Type 'help' to get list of commands.\n";
+    std::cout << "Type 'cmds' to get list of commands.\n";
 
     while (true) {
         std::string input;
