@@ -17,11 +17,12 @@ std::string getTimestamp() {
 }
 
 std::vector<std::string> commandList = {
-    "time",
-    "exit",
-    "help",
-    "cls/clear",
-    "dir"
+    "|| time: Show current date and time     ||",
+    "|| exit/quit: Exit the shell            ||",
+    "|| cmds: Show list of commands          ||",
+    "|| cls/clear: Clear the screen          ||",
+    "|| dir: List items in current directory ||",
+    "|| cd..: Go to previous directory       ||",
 };
 
 void printMessage(std::string message) {std::cout << message << '\n'; return;}
@@ -32,23 +33,26 @@ class commands {
 public:
     static void printTime() {printMessage(getTimestamp()); return;};
     static void exitShell() {printMessage("Exiting shell..."); exit(0);};
-
-    static void help() {
+    static void cmds() {
         for (int i = 0; i < commandList.size(); i++) {
             printMessage(commandList[i]);
         }
     };
-
     static void getItemsInDirectory(std::string path) {
         try {
             for (const auto& entry : std::filesystem::directory_iterator(path)) {
-                std::cout << entry.path() << std::endl;
+                if (entry.is_directory()) {
+                    printMessage("|| <DIR>   " + entry.path().filename().string());
+                } else if (entry.is_regular_file()) {
+                    printMessage("||         " + entry.path().filename().string());
+                } else {
+                    printMessage("|| <OTHER> " + entry.path().filename().string());
+                }
             }
         } catch (const std::filesystem::filesystem_error& e) {
             printMessage("Error accessing directory: " + std::string(e.what()));
         }
     }
-
     static void clearScreen() {
         #ifdef _WIN32
             system("cls");
@@ -56,5 +60,8 @@ public:
             system("clear");
         #endif
     };
-
+    static void previousDirectory() {
+        std::filesystem::current_path(std::filesystem::current_path().parent_path());
+        return;
+    };
 };
