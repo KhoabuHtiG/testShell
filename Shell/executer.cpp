@@ -2,7 +2,9 @@
 #include <unordered_map>
 #include "executer.h"
 
+//Run command function
 void executeCommand(const std::string& command) {
+    //Commands
     std::unordered_map<std::string, std::function<void()>> cmds_ = {
         {"time", commands::printTime},
         {"exit", commands::exitShell},
@@ -10,6 +12,7 @@ void executeCommand(const std::string& command) {
         {"cd..", commands::previousDirectory},
     };
 
+    //Run commands
     if (cmds_.find(command) != cmds_.end()) {
         cmds_[command]();
     } else if (command == "dir") {
@@ -21,6 +24,11 @@ void executeCommand(const std::string& command) {
         } 
     } else if(command == "cls" || command == "clear") {
         commands::clearScreen();
+    } else if (command.rfind("start ", 0) == 0) {
+        std::string program = command.substr(6);
+        if (!commands::startProgram(program)) {
+            printMessage("The " + program + " is not recognized as a possible executed file.");
+        }
     } else if (command.empty()) {
         return;
     } else {
