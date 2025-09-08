@@ -5,6 +5,7 @@
 #include <ctime>
 #include <filesystem>
 #include <vector>
+namespace fs = std::filesystem;
 
 std::string getTimestamp() {
     auto now = std::chrono::system_clock::now();
@@ -18,16 +19,17 @@ std::string getTimestamp() {
 
 std::vector<std::string> commandList = {
     "|| time: Show current date and time     ||",
-    "|| exit/quit: Exit the shell            ||",
+    "|| exit: Exit the shell                 ||",
     "|| cmds: Show list of commands          ||",
     "|| cls/clear: Clear the screen          ||",
     "|| dir: List items in current directory ||",
+    "|| cd: Access to the exist directory    ||",
     "|| cd..: Go to previous directory       ||",
 };
 
 void printMessage(std::string message) {std::cout << message << '\n'; return;}
 void executeCommand(const std::string& command);
-void commandError(std::string command) {printMessage(command + " : The term '" +command+"' is not recognized as the name of a cmdlet, function, script file, or operable program."); return;}
+void handleCommandError(std::string command) {printMessage(command + " : The term '" +command+"' is not recognized as the name of a cmdlet, function, script file, or operable program."); return;}
 
 class commands {
 public:
@@ -40,7 +42,7 @@ public:
     };
     static void getItemsInDirectory(std::string path) {
         try {
-            for (const auto& entry : std::filesystem::directory_iterator(path)) {
+            for (const auto& entry : fs::directory_iterator(path)) {
                 if (entry.is_directory()) {
                     printMessage("|| <DIR>   " + entry.path().filename().string());
                 } else if (entry.is_regular_file()) {
@@ -49,19 +51,33 @@ public:
                     printMessage("|| <OTHER> " + entry.path().filename().string());
                 }
             }
-        } catch (const std::filesystem::filesystem_error& e) {
+        } catch (const fs::filesystem_error& e) {
             printMessage("Error accessing directory: " + std::string(e.what()));
         }
     }
     static void clearScreen() {
         #ifdef _WIN32
             system("cls");
+            printMessage("Type 'cmds' to get list of commands.");
         #else
             system("clear");
+            printMessage("Type 'cmds' to get list of commands.");
         #endif
     };
     static void previousDirectory() {
-        std::filesystem::current_path(std::filesystem::current_path().parent_path());
+        fs::current_path(fs::current_path().parent_path());
         return;
     };
+    static bool nextDirectory(std::string path) {
+        try {
+            if (fs::exists(path) && fs::is_directory(path)) {
+                fs::current_path(path);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (const fs::filesystem_error& e) {
+            printMessage("Error accessing directory: " + std::string(e.what()));
+        }
+    }
 };

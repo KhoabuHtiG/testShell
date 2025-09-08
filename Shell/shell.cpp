@@ -18,7 +18,7 @@ int main() {
     while (true) {
         std::string input;
         std::filesystem::path currentPath = std::filesystem::current_path();
-        std::cout << currentPath << ":> ";
+        std::cout << currentPath << " :> ";
 
         if (std::getline(std::cin, input)) {
             executeCommand(input);
