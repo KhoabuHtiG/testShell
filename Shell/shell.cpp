@@ -13,7 +13,6 @@ void clearScreen() {
 
 int main() {
     clearScreen();
-    std::cout << "Welcome to a test shell!\n";
     std::cout << "Type 'cmds' to get list of commands.\n";
 
     while (true) {

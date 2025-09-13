@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <filesystem>
+#include <fstream>
 #include <functional>
 #include <vector>
 #include <stdlib.h>
@@ -37,7 +38,7 @@ static std::vector<std::string> colors {
     "   6 = Yellow        E = Light Yellow",
     "   7 = White         F = Bright White",
 };
-static std::vector<std::string> commandList = {
+std::vector<std::string> commandList = {
     "|| time: Show current date and time     ||",
     "|| exit: Exit the shell                 ||",
     "|| cmds: Show list of commands          ||",
@@ -48,8 +49,25 @@ static std::vector<std::string> commandList = {
     "|| start: Start a exe program           ||",
     "|| color: Change the color of the text  ||",
     "|| rename: Change the name of a file    ||",
-    "|| del: Delete file or directory        ||",
+    "|| create: Create a file or directory   ||",
+    "|| del: delete a file or directory      ||",
 };
+
+uintmax_t getDirectorySize(const fs::path& directoryPath) {
+    uintmax_t totalSize = 0;
+
+    try {
+        for (const auto& entry : fs::recursive_directory_iterator(directoryPath)) {
+            if (fs::is_regular_file(entry.path())) {
+                totalSize += fs::file_size(entry.path());
+            }
+        }
+    } catch (const fs::filesystem_error& e) {
+        std::cerr << "Error: " << e.what() << '\n';
+    }
+
+    return totalSize;
+}
 
 class commands {
 public:
@@ -81,13 +99,15 @@ public:
     };
     static void getItemsInDirectory(const std::string path) {
         try {
+            printMessage("\n      Directory: " + path + '\n');
             for (const auto& entry : fs::directory_iterator(path)) {
                 if (entry.is_directory()) {
-                    printMessage("|| <DIR>   " + entry.path().filename().string());
+                    uintmax_t size = getDirectorySize(entry);
+                    printMessage("|| <DIR>   " + entry.path().filename().string() + " | Length: " + std::to_string(size));
                 } else if (entry.is_regular_file()) {
-                    printMessage("||         " + entry.path().filename().string());
+                    printMessage("||         " + entry.path().filename().string() + " | Length: " + std::to_string(fs::file_size(entry.path())));
                 } else {
-                    printMessage("|| <OTHER> " + entry.path().filename().string());
+                    printMessage("|| <OTHER> " + entry.path().filename().string() + " | Length: " + std::to_string(fs::file_size(entry.path())));
                 }
             }
         } catch (const fs::filesystem_error& e) {
@@ -164,8 +184,7 @@ public:
                 printMessage("The "+path+" is not recognized as a path, a file or a directory.");
             }
         } catch (fs::filesystem_error& e) {
-            std::string error = e.what();
-            printMessage("Error while remaming file: " + error);
+            printMessage("Error while remaming file: " + std::string(e.what()));
         }
         return;
     }
@@ -185,6 +204,55 @@ public:
         } catch (fs::filesystem_error& e) {
             std::string error = e.what();
             printMessage("Error deleting file or directory: " + error);
+        }
+        return;
+    }
+    static void createFile() {
+        try {
+            std::string input;
+            char option;
+
+            printMessage("Would you like to create a file or a directory(f, d): ");
+            std::getline(std::cin, input);
+            if (input.empty()) {
+                printMessage("No input detect.");
+                return;
+            }
+
+            option = input[0];
+            if (option == 'f' || option == 'F') {
+                std::string fileName;
+                printMessage("Please enter your file name: ");
+                std::getline(std::cin, fileName);
+                if (fileName.empty()) {
+                    printMessage("No input detect.");
+                    return;
+                }
+
+                if (fs::exists(fileName)) {
+                    printMessage("The file is already existed");
+                    return;
+                }
+
+                std::ofstream file(fileName);
+                printMessage("Created "+fileName);
+            } else if (option == 'd' || option == 'D') {
+                std::string directoryName;
+                printMessage("Please enter your directory name: ");
+                std::getline(std::cin, directoryName);
+                if (directoryName.empty()) {
+                    printMessage("No input detect.");
+                    return;
+                }
+
+                fs::create_directory(directoryName);
+                printMessage("Created "+directoryName);
+            } else {
+                printMessage("Invalid input.");
+                return;
+            }
+        } catch (fs::filesystem_error& e) {
+            printMessage("Error creating a file or directory: " + std::string(e.what()));
         }
         return;
     }

@@ -2,16 +2,17 @@
 #include <unordered_map>
 #include "executer.h"
 
-static std::unordered_map<std::string, std::function<void()>> cmds_ = {
+static std::unordered_map<std::string, std::function<void()>> reg_cmds = {
     {"time", commands::printTime},
     {"exit", commands::exitShell},
     {"cmds", commands::cmds},
     {"cd..", commands::previousDirectory},
+    {"create", commands::createFile},
 };
 
 void executeCommand(const std::string& command) {
-    if (cmds_.find(command) != cmds_.end()) {
-        cmds_[command]();
+    if (reg_cmds.find(command) != reg_cmds.end()) {
+        reg_cmds[command]();
     } else if (command == "dir" || command == "ls") {
         commands::getItemsInDirectory(std::filesystem::current_path().string());
     } else if (command.rfind("cd ", 0) == 0) {
