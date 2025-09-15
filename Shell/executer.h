@@ -51,6 +51,8 @@ std::vector<std::string> commandList = {
     "|| rename: Change the name of a file    ||",
     "|| create: Create a file or directory   ||",
     "|| del: delete a file or directory      ||",
+    "|| history: show current cmds history   ||",
+    "|| phistory: show past cmds hitory      ||"
 };
 
 uintmax_t getDirectorySize(const fs::path& directoryPath) {
@@ -67,6 +69,23 @@ uintmax_t getDirectorySize(const fs::path& directoryPath) {
     }
 
     return totalSize;
+}
+static std::vector<std::string> cmds_history;
+
+static void addToHistory(const std::string cmd) {
+    cmds_history.emplace_back(cmd);
+
+    std::string fileName = "Cmd_History_Log";
+    if (!fs::exists(fs::path(fileName))) {
+        std::ofstream historyFile(fileName);
+        historyFile.close();
+    }
+
+    std::ofstream historyLogFile(fileName, std::ios::app);
+    if (historyLogFile.is_open()) {
+        historyLogFile << cmd << '\n';
+        historyLogFile.close();
+    }
 }
 
 class commands {
@@ -255,5 +274,27 @@ public:
             printMessage("Error creating a file or directory: " + std::string(e.what()));
         }
         return;
+    }
+    static void showHistory() {
+        for (int i = 0; i < cmds_history.size(); ++i) {
+            printMessage(cmds_history[i]);
+        }
+    }
+    static void readCmdHistory() {
+        std::string fileName = "Cmd_History_Log";
+        std::vector<std::string> loadData;
+        std::ifstream historyLogFile(fileName);
+
+        if (historyLogFile.is_open()) {
+            std::string line;
+            while (std::getline(historyLogFile, line)) { 
+                loadData.push_back(line);
+            }
+            historyLogFile.close();
+        }
+
+        for (const auto& cmd : loadData) {
+            printMessage(cmd);
+        }
     }
 };
