@@ -1,0 +1,47 @@
+Available Commands:
+-------------------
+
+ver
+    Show the current version of the shell
+
+time
+    Show the current date and time.
+
+exit
+    Exit the shell.
+
+cmds
+    Show all available commands.
+
+cls / clear
+    Clear the shell screen.
+
+dir / ls
+    List contents of the current directory.
+
+cd <path>
+    Change to the specified directory.
+
+cd..
+    Move to the parent directory.
+
+start <path>
+    Start an executable program.
+
+color <option>
+    Change the text color.
+
+rename <file/directory> <new_name>
+    Rename a file or directory.
+
+create <file/directory>
+    Create a new file or directory.
+
+del <file/directory>
+    Delete a file or directory.
+
+history
+    Show commands used in the current session.
+
+phistory
+    Show commands used in past sessions.
