@@ -1,69 +1,75 @@
 #include <functional>
 #include <unordered_map>
 #include <filesystem>
-#include "../include/executer.h"
+#include "../include/executer.hpp"
 
 static std::unordered_map<std::string, std::function<void()>> reg_cmds = {
-    {"time", commands::printTime},
-    {"exit", commands::exitShell},
-    {"help", commands::help},
-    {"ver", commands::version},
-    {"cmds", commands::cmds},
-    {"cd..", commands::previousDirectory},
-    {"create", commands::createFile},
-    {"history", commands::showHistory},
-    {"phistory", commands::readCmdHistory},
+    {"time", regCommand::printTime},
+    {"exit", regCommand::exitShell},
+    {"help", regCommand::help},
+    {"cls", regCommand::clearScreen},
+    {"clear", regCommand::clearScreen},
+    {"ver", regCommand::version},
+    {"cmds", regCommand::cmds},
+    {"cd..", regCommand::previousDirectory},
+    {"create", regCommand::createFile},
+    {"history", regCommand::showHistory},
+    {"phistory", regCommand::readCmdHistory},
+    {"whoami", regCommand::whoami},
 };
 
-void executeCommand(const std::string& command) {
-    if (reg_cmds.find(command) != reg_cmds.end()) {
-        reg_cmds[command]();
-        addToHistory(command);
-    } else if (command == "dir" || command == "ls") {
-        commands::getItemsInDirectory(fs::current_path().string());
-        addToHistory(command);
-    } else if (command.rfind("cd ", 0) == 0) {
-        std::string path = command.substr(3);
-        commands::nextDirectory(path);
-        addToHistory(command + path);
-    } else if(command == "cls" || command == "clear") {
-        commands::clearScreen();
-        addToHistory(command);
-    } else if (command.rfind("start ", 0) == 0) {
-        std::string program = command.substr(6);
-        if (program.empty()) {
-            printMessage("No input detect");
-            return;
-        }
+static std::unordered_map<std::string, std::function<void(std::string)>> arg_cmds {
+    {"dir", [](const std::string& args) {
+        argCommand::getItemsInDirectory(args.empty() ? fs::current_path().string() : args);
+    }},
+    {"ls", [](const std::string& args) {
+        argCommand::getItemsInDirectory(args.empty() ? fs::current_path().string() : args);
+    }},
+    {"cd", [](const std::string& args) {
+        argCommand::nextDirectory(args);
+    }},
+    {"start", [](const std::string& args) {
+        if (args.empty()) { printMessage("No input detect"); return; }
+        argCommand::startProgram(args);
+    }},
+    {"color", [](const std::string& args) {
+        if (args.empty()) { printMessage("No input detect"); return; }
+        argCommand::changeTextColor(args[0]);
+    }},
+    {"rename", [](const std::string& args) {
+        argCommand::renameFile(args);
+    }},
+    {"del", [](const std::string& args) {
+        if (args.empty()) { printMessage("No input detect"); return; }
+        argCommand::deleteFile(args);
+    }},
+};
 
-        commands::startProgram(program);
-        addToHistory(command + program);
-    } else if (command.rfind("color ", 0) == 0) {
-        std::string input = command.substr(6);
-        if (input.empty()) {
-            printMessage("No input detect");
-            return;
-        }
+void executeCommand(const std::string& input) {
+    if (input.empty()) return;
 
-        char colorOption = input[0];
-        commands::changeTextColor(colorOption);
-        addToHistory(command + colorOption);
-    } else if (command.rfind("rename ", 0) == 0) {
-        std::string file = command.substr(7);
-        commands::renameFile(file);
-        addToHistory(command + file);
-    } else if (command.rfind("del ", 0) == 0) {
-        std::string file = command.substr(4);
-        if (file.empty()) {
-            printMessage("No input detect.");
-            return;
-        }
+    std::string cmd, args;
+    size_t spacePos = input.find(' ');
+    if (spacePos != std::string::npos) {
+        cmd = input.substr(0, spacePos);
+        args = input.substr(spacePos + 1);
+    } else {
+        cmd = input;
+    }
 
-        commands::deleteFile(file);
-        addToHistory(command + file);
-    } else if (command.empty()) {
+    auto regCmd = reg_cmds.find(cmd);
+    if (regCmd != reg_cmds.end()) {
+        regCmd->second();
+        addToHistory(input);
         return;
-    } else handleCommandError(command);
+    }
 
-    return;
+    auto argCmd = arg_cmds.find(cmd);
+    if (argCmd != arg_cmds.end()) {
+        argCmd->second(args);
+        addToHistory(input);
+        return;
+    }
+
+    handleCommandError(cmd);
 }

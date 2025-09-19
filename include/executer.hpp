@@ -9,8 +9,15 @@
 #include <fstream>
 #include <functional>
 #include <vector>
-#include <stdlib.h>
 #include <unordered_map>
+#ifdef _WIN32
+    #include <windows.h>
+    #include <Lmcons.h>
+#elif __linux__
+    #include <unistd.h>
+    #include <pwd.h>
+#endif
+
 namespace fs = std::filesystem;
 
 std::string getTimestamp() {
@@ -39,22 +46,9 @@ static std::vector<std::string> colors {
     "   7 = White         F = Bright White",
 };
 std::vector<std::string> commandList = {
-    "|| help",
-    "|| time",
-    "|| exit",
-    "|| cmds",
-    "|| ver",
-    "|| cls / clear",
-    "|| dir / ls",
-    "|| cd",
-    "|| cd..",
-    "|| start",
-    "|| color",
-    "|| rename",
-    "|| create",
-    "|| del",
-    "|| history",
-    "|| phistory"
+    "|| help", "|| time", "|| exit", "|| cmds", "|| ver", "|| cls / clear",
+    "|| dir / ls", "|| cd", "|| cd..", "|| start", "|| color", "|| rename",
+    "|| create", "|| del", "|| history", "|| phistory", "|| whoami",
 };
 
 uintmax_t getDirectorySize(const fs::path& directoryPath) {
@@ -73,6 +67,24 @@ uintmax_t getDirectorySize(const fs::path& directoryPath) {
     return totalSize;
 }
 static std::vector<std::string> cmds_history;
+static std::unordered_map<char, std::function<int()>> color_ = {
+    {'0', []() {return system("Color 00");}},
+    {'1', []() {return system("Color 01");}},
+    {'2', []() {return system("Color 02");}},
+    {'3', []() {return system("Color 03");}},
+    {'4', []() {return system("Color 04");}},
+    {'5', []() {return system("Color 05");}},
+    {'6', []() {return system("Color 06");}},
+    {'7', []() {return system("Color 07");}},
+    {'8', []() {return system("Color 08");}},
+    {'9', []() {return system("Color 09");}},
+    {'A', []() {return system("Color 0A");}},
+    {'B', []() {return system("Color 0B");}},
+    {'C', []() {return system("Color 0C");}},
+    {'D', []() {return system("Color 0D");}},
+    {'E', []() {return system("Color 0E");}},
+    {'F', []() {return system("Color 0F");}},
+};
 
 fs::path getFileFolder() {return fs::path("../files");}
 
@@ -93,27 +105,8 @@ static void addToHistory(const std::string cmd) {
     }
 }
 
-class commands {
+class regCommand {
 public:
-    static inline std::unordered_map<char, std::function<int()>> color_ = {
-        {'0', []() {return system("Color 00");}},
-        {'1', []() {return system("Color 01");}},
-        {'2', []() {return system("Color 02");}},
-        {'3', []() {return system("Color 03");}},
-        {'4', []() {return system("Color 04");}},
-        {'5', []() {return system("Color 05");}},
-        {'6', []() {return system("Color 06");}},
-        {'7', []() {return system("Color 07");}},
-        {'8', []() {return system("Color 08");}},
-        {'9', []() {return system("Color 09");}},
-        {'A', []() {return system("Color 0A");}},
-        {'B', []() {return system("Color 0B");}},
-        {'C', []() {return system("Color 0C");}},
-        {'D', []() {return system("Color 0D");}},
-        {'E', []() {return system("Color 0E");}},
-        {'F', []() {return system("Color 0F");}},
-    };
-
     static void help() {
         std::ifstream file(getFileFolder() / "HelpCommandList.txt");
         if (file.is_open()) {
@@ -132,6 +125,116 @@ public:
             printMessage(commandList[i]);
         }
     };
+    static void clearScreen() {
+        #ifdef _WIN32
+            system("cls");
+            printMessage("Type 'cmds' to get list of commands.");
+        #else
+            system("clear");
+            printMessage("Type 'cmds' to get list of commands.");
+        #endif
+    };
+    static void previousDirectory() {
+        fs::current_path(fs::current_path().parent_path());
+        return;
+    };
+    static void createFile() {
+        try {
+            std::string input;
+            char option;
+
+            printMessage("Would you like to create a file or a directory(f, d): ");
+            std::getline(std::cin, input);
+            if (input.empty()) {
+                printMessage("No input detect.");
+                return;
+            }
+
+            option = input[0];
+            if (option == 'f' || option == 'F') {
+                std::string fileName;
+                printMessage("Please enter your file name: ");
+                std::getline(std::cin, fileName);
+                if (fileName.empty()) {
+                    printMessage("No input detect.");
+                    return;
+                }
+
+                if (fs::exists(fileName)) {
+                    printMessage("The file is already existed");
+                    return;
+                }
+
+                std::ofstream file(fileName);
+                printMessage("Created "+fileName);
+            } else if (option == 'd' || option == 'D') {
+                std::string directoryName;
+                printMessage("Please enter your directory name: ");
+                std::getline(std::cin, directoryName);
+                if (directoryName.empty()) {
+                    printMessage("No input detect.");
+                    return;
+                }
+
+                fs::create_directory(directoryName);
+                printMessage("Created "+directoryName);
+            } else {
+                printMessage("Invalid input.");
+                return;
+            }
+        } catch (fs::filesystem_error& e) {
+            printMessage("Error creating a file or directory: " + std::string(e.what()));
+        }
+        return;
+    }
+    static void showHistory() {
+        for (int i = 0; i < cmds_history.size(); ++i) {
+            printMessage(cmds_history[i]);
+        }
+    }
+    static void readCmdHistory() {
+        std::vector<std::string> loadData;
+        std::ifstream historyLogFile(getFileFolder() / "Cmd_History_Log.txt");
+
+        if (historyLogFile.is_open()) {
+            std::string line;
+            while (std::getline(historyLogFile, line)) { 
+                loadData.push_back(line);
+            }
+            historyLogFile.close();
+        }
+
+        for (const auto& cmd : loadData) {
+            printMessage(cmd);
+        }
+    }
+    static void whoami() {
+        #ifdef _WIN32
+            char username[UNLEN + 1];
+            DWORD username_len = UNLEN + 1;
+            if (GetUserNameA(username, &username_len)) {
+                std::cout << username << "\n";
+            } else {
+                std::cerr << "Error getting username.\n";
+            }
+        #elif __linux__
+            const char* username = getenv("USER"); // env var
+            if (username) {
+                std::cout << username << "\n";
+            } else {
+                struct passwd* pw = getpwuid(getuid());
+                if (pw) {
+                    std::cout << pw->pw_name << "\n";
+                } else {
+                    std::cerr << "Error getting username.\n";
+                }
+            }
+        #endif
+    }
+};
+
+class argCommand {
+public:
     static void getItemsInDirectory(const std::string path) {
         try {
             printMessage("\n      Directory: " + path + '\n');
@@ -149,19 +252,6 @@ public:
             printMessage("Error accessing directory: " + std::string(e.what()));
         }
     }
-    static void clearScreen() {
-        #ifdef _WIN32
-            system("cls");
-            printMessage("Type 'cmds' to get list of commands.");
-        #else
-            system("clear");
-            printMessage("Type 'cmds' to get list of commands.");
-        #endif
-    };
-    static void previousDirectory() {
-        fs::current_path(fs::current_path().parent_path());
-        return;
-    };
     static bool nextDirectory(const std::string path) {
         try {
             if (fs::exists(path) && fs::is_directory(path)) {
@@ -241,75 +331,5 @@ public:
             printMessage("Error deleting file or directory: " + error);
         }
         return;
-    }
-    static void createFile() {
-        try {
-            std::string input;
-            char option;
-
-            printMessage("Would you like to create a file or a directory(f, d): ");
-            std::getline(std::cin, input);
-            if (input.empty()) {
-                printMessage("No input detect.");
-                return;
-            }
-
-            option = input[0];
-            if (option == 'f' || option == 'F') {
-                std::string fileName;
-                printMessage("Please enter your file name: ");
-                std::getline(std::cin, fileName);
-                if (fileName.empty()) {
-                    printMessage("No input detect.");
-                    return;
-                }
-
-                if (fs::exists(fileName)) {
-                    printMessage("The file is already existed");
-                    return;
-                }
-
-                std::ofstream file(fileName);
-                printMessage("Created "+fileName);
-            } else if (option == 'd' || option == 'D') {
-                std::string directoryName;
-                printMessage("Please enter your directory name: ");
-                std::getline(std::cin, directoryName);
-                if (directoryName.empty()) {
-                    printMessage("No input detect.");
-                    return;
-                }
-
-                fs::create_directory(directoryName);
-                printMessage("Created "+directoryName);
-            } else {
-                printMessage("Invalid input.");
-                return;
-            }
-        } catch (fs::filesystem_error& e) {
-            printMessage("Error creating a file or directory: " + std::string(e.what()));
-        }
-        return;
-    }
-    static void showHistory() {
-        for (int i = 0; i < cmds_history.size(); ++i) {
-            printMessage(cmds_history[i]);
-        }
-    }
-    static void readCmdHistory() {
-        std::vector<std::string> loadData;
-        std::ifstream historyLogFile(getFileFolder() / "Cmd_History_Log.txt");
-
-        if (historyLogFile.is_open()) {
-            std::string line;
-            while (std::getline(historyLogFile, line)) { 
-                loadData.push_back(line);
-            }
-            historyLogFile.close();
-        }
-
-        for (const auto& cmd : loadData) {
-            printMessage(cmd);
-        }
     }
 };
