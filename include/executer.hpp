@@ -19,6 +19,7 @@
 #endif
 
 namespace fs = std::filesystem;
+static auto shellStartTime = std::chrono::steady_clock::now();
 
 std::string getTimestamp() {
     auto now = std::chrono::system_clock::now();
@@ -49,6 +50,7 @@ std::vector<std::string> commandList = {
     "|| help", "|| time", "|| exit", "|| cmds", "|| ver", "|| cls / clear",
     "|| dir / ls", "|| cd", "|| cd..", "|| start", "|| color", "|| rename",
     "|| create", "|| del", "|| history", "|| phistory", "|| whoami",
+    "|| uptime", "|| echo",
 };
 
 uintmax_t getDirectorySize(const fs::path& directoryPath) {
@@ -231,8 +233,17 @@ public:
             }
         #endif
     }
-};
+    static void upTime() {
+        auto now = std::chrono::steady_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - shellStartTime).count();
 
+        int hours = elapsed / 3600;
+        int minutes = (elapsed % 3600) / 60;
+        int seconds = elapsed % 60;
+
+        printMessage("Uptime: " + std::to_string(hours) + "h " + std::to_string(minutes) + "m " + std::to_string(seconds) + "s ");
+    }
+};
 class argCommand {
 public:
     static void getItemsInDirectory(const std::string path) {
@@ -331,5 +342,8 @@ public:
             printMessage("Error deleting file or directory: " + error);
         }
         return;
+    }
+    static void echo(const std::string input) {
+        printMessage(input);
     }
 };
