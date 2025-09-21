@@ -5,50 +5,56 @@
 
 namespace cmds_type {
     static std::unordered_map<std::string, std::function<void()>> reg_cmds = {
-        {"time", regCommand::printTime},
-        {"exit", regCommand::exitShell},
-        {"help", regCommand::help},
-        {"cls", regCommand::clearScreen},
-        {"clear", regCommand::clearScreen},
-        {"ver", regCommand::version},
-        {"cmds", regCommand::cmds},
-        {"cd..", regCommand::previousDirectory},
-        {"create", regCommand::createFile},
-        {"history", regCommand::showHistory},
-        {"phistory", regCommand::readCmdHistory},
-        {"whoami", regCommand::whoami},
-        {"uptime", regCommand::upTime},
+        {"time", commandType::regCommand::printTime},
+        {"exit", commandType::regCommand::exitShell},
+        {"help", commandType::regCommand::help},
+        {"cls", commandType::regCommand::clearScreen},
+        {"clear", commandType::regCommand::clearScreen},
+        {"ver", commandType::regCommand::version},
+        {"cmds", commandType::regCommand::cmds},
+        {"cd..", commandType::regCommand::previousDirectory},
+        {"create", commandType::regCommand::createFile},
+        {"history", commandType::regCommand::showHistory},
+        {"phistory", commandType::regCommand::readCmdHistory},
+        {"whoami", commandType::regCommand::whoami},
+        {"uptime", commandType::regCommand::upTime},
     };
-
     static std::unordered_map<std::string, std::function<void(std::string)>> arg_cmds {
         {"dir", [](const std::string& args) {
-            argCommand::getItemsInDirectory(args.empty() ? fs::current_path().string() : args);
+            commandType::argCommand::getItemsInDirectory(args.empty() ? fs::current_path().string() : args);
         }},
         {"ls", [](const std::string& args) {
-            argCommand::getItemsInDirectory(args.empty() ? fs::current_path().string() : args);
+            commandType::argCommand::getItemsInDirectory(args.empty() ? fs::current_path().string() : args);
         }},
         {"cd", [](const std::string& args) {
-            argCommand::nextDirectory(args);
+            commandType::argCommand::nextDirectory(args);
         }},
         {"start", [](const std::string& args) {
             if (args.empty()) { printMessage("No input detect"); return; }
-            argCommand::startProgram(args);
+            commandType::argCommand::startProgram(args);
         }},
         {"color", [](const std::string& args) {
             if (args.empty()) { printMessage("No input detect"); return; }
-            argCommand::changeTextColor(args[0]);
+            commandType::argCommand::changeTextColor(args[0]);
         }},
         {"rename", [](const std::string& args) {
-            argCommand::renameFile(args);
+            commandType::argCommand::renameFile(args);
         }},
         {"del", [](const std::string& args) {
             if (args.empty()) { printMessage("No input detect"); return; }
-            argCommand::deleteFile(args);
+            commandType::argCommand::deleteFile(args);
         }},
         {"echo", [](const std::string& args) {
             if (args.empty()) { printMessage("No input detect"); return; }
-            argCommand::echo(args);
-        }}
+            commandType::argCommand::echo(args);
+        }},
+        {"tree", [](const std::string& args) {
+            if (args.empty()){
+                commandType::argCommand::tree(fs::current_path());
+            } else {
+                commandType::argCommand::tree(args);
+            }
+        }},
     };
 }
 
@@ -62,16 +68,14 @@ void executeCommand(const std::string& input) {
         args = input.substr(spacePos + 1);
     } else cmd = input;
 
-    auto regCmd = cmds_type::reg_cmds.find(cmd);
-    if (regCmd != cmds_type::reg_cmds.end()) {
-        regCmd->second();
+    if (cmds_type::reg_cmds.find(cmd) != cmds_type::reg_cmds.end()) {
+        cmds_type::reg_cmds.find(cmd)->second();
         addToHistory(input);
         return;
     }
 
-    auto argCmd = cmds_type::arg_cmds.find(cmd);
     if (cmds_type::arg_cmds.find(cmd) != cmds_type::arg_cmds.end()) {
-        argCmd->second(args);
+        cmds_type::arg_cmds.find(cmd)->second(args);
         addToHistory(input);
         return;
     }
