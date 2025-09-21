@@ -45,3 +45,15 @@ history
 
 phistory
     Show commands used in past sessions.
+
+whoami
+    Show the current user name
+
+uptime
+    Show long your shell/program has been running.
+
+echo <text>
+    Print anything you type
+
+tree
+    Print contents of the current path/specific path
