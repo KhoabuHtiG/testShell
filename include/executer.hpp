@@ -47,10 +47,10 @@ static std::vector<std::string> colors {
     "   7 = White         F = Bright White",
 };
 std::vector<std::string> commandList = {
-    "|| help", "|| time", "|| exit", "|| cmds", "|| ver", "|| cls / clear",
-    "|| dir / ls", "|| cd", "|| cd..", "|| start", "|| color", "|| rename",
-    "|| create", "|| del", "|| history", "|| phistory", "|| whoami",
-    "|| uptime", "|| echo", "|| tree",
+    "|| help", "|| time", "|| exit", "|| cmds", "|| cls",
+    "|| list", "|| cp", "|| cp..", "|| exec", "|| color", "|| rename",
+    "|| del", "|| his", "|| phis", "|| whoami", "|| uptime",
+    "|| tree", "|| makef", "makedir", "type",
 };
 
 uintmax_t getDirectorySize(const fs::path& directoryPath) {
@@ -135,8 +135,7 @@ namespace commandType {
         }
         static void printTime() {printMessage(getTimestamp());};
         static void exitShell() {printMessage("Exiting shell..."); exit(0);};
-        static void version() {printMessage("TestShell v0.0.0 - Sep 7 2025");};
-        static void cmds() {
+        static void listCmds() {
             for (int i = 0; i < commandList.size(); i++) {
                 printMessage(commandList[i]);
             }
@@ -150,59 +149,10 @@ namespace commandType {
                 printMessage("Type 'cmds' to get list of commands.");
             #endif
         };
-        static void previousDirectory() {
+        static void returnToParentDirectory() {
             fs::current_path(fs::current_path().parent_path());
             return;
         };
-        static void createFile() {
-            try {
-                std::string input;
-                char option;
-
-                printMessage("Would you like to create a file or a directory(f, d): ");
-                std::getline(std::cin, input);
-                if (input.empty()) {
-                    printMessage("No input detect.");
-                    return;
-                }
-
-                option = input[0];
-                if (option == 'f' || option == 'F') {
-                    std::string fileName;
-                    printMessage("Please enter your file name: ");
-                    std::getline(std::cin, fileName);
-                    if (fileName.empty()) {
-                        printMessage("No input detect.");
-                        return;
-                    }
-
-                    if (fs::exists(fileName)) {
-                        printMessage("The file is already existed");
-                        return;
-                    }
-
-                    std::ofstream file(fileName);
-                    printMessage("Created "+fileName);
-                } else if (option == 'd' || option == 'D') {
-                    std::string directoryName;
-                    printMessage("Please enter your directory name: ");
-                    std::getline(std::cin, directoryName);
-                    if (directoryName.empty()) {
-                        printMessage("No input detect.");
-                        return;
-                    }
-
-                    fs::create_directory(directoryName);
-                    printMessage("Created "+directoryName);
-                } else {
-                    printMessage("Invalid input.");
-                    return;
-                }
-            } catch (fs::filesystem_error& e) {
-                printMessage("Error creating a file or directory: " + std::string(e.what()));
-            }
-            return;
-        }
         static void showHistory() {
             for (int i = 0; i < cmds_history.size(); ++i) {
                 printMessage(cmds_history[i]);
@@ -247,7 +197,7 @@ namespace commandType {
                 }
             #endif
         }
-        static void upTime() {
+        static void uptime() {
             auto now = std::chrono::steady_clock::now();
             auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - shellStartTime).count();
 
@@ -260,7 +210,7 @@ namespace commandType {
     };
     class argCommand {
     public:
-        static void getItemsInDirectory(const std::string path) {
+        static void listItemsInDirectory(const std::string path) {
             try {
                 printMessage("\n      Directory: " + path + '\n');
                 for (const auto& entry : fs::directory_iterator(path)) {
@@ -277,7 +227,7 @@ namespace commandType {
                 printMessage("Error accessing directory: " + std::string(e.what()));
             }
         }
-        static bool nextDirectory(const std::string path) {
+        static bool accessDirectory(const std::string path) {
             try {
                 if (fs::exists(path) && fs::is_directory(path)) {
                     fs::current_path(path);
@@ -291,7 +241,7 @@ namespace commandType {
                 return false;
             }
         }
-        static void startProgram(const std::string program) {
+        static void executeProgram(const std::string program) {
             try {
                 if (fs::exists(program) && fs::is_regular_file(program)) {
                     #ifdef _WIN32
@@ -357,9 +307,6 @@ namespace commandType {
             }
             return;
         }
-        static void echo(const std::string input) {
-            printMessage(input);
-        }
         static void tree(const fs::path path) {
             fs::path root = path.empty() ? fs::current_path() : fs::path(path);
 
@@ -371,6 +318,45 @@ namespace commandType {
             std::cout << root.string() << "\n";
             for (const auto& entry : fs::directory_iterator(root)) {
                 printTree(entry.path(), 1);
+            }
+        }
+        static void makeFile(const std::string name) {
+            try {
+                if (fs::exists(name)) {
+                    printMessage("File already existed");
+                }
+
+                std::ofstream file(name);
+            } catch (const fs::filesystem_error& e) {
+                std::string error = e.what();
+                printMessage("Error: " + error);
+            }
+        }
+        static void makeDirectory(const std::string direcName) {
+            try {
+                if (fs::exists(direcName)) {
+                    printMessage("Directory already existed");
+                    return;
+                }
+
+                fs::create_directory(direcName);
+            } catch (const fs::filesystem_error& e) {
+                std::string error = e.what();
+                printMessage("Error: " + error);
+            }
+        }
+        static void typeLineInFile(const std::string input, const std::string file) {
+            try {
+                if (!fs::exists(file)) {
+                    printMessage("No such file found with this name.");
+                    return;
+                }
+                std::ofstream inFile(file, std::ios::app);
+
+                inFile << input << '\n';
+            } catch (const fs::filesystem_error& e) {
+                std::string error = e.what();
+                printMessage("Error: " + error);
             }
         }
     };

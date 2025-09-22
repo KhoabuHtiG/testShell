@@ -1,9 +1,6 @@
 Available Commands:
 -------------------
 
-ver
-    Show the current version of the shell
-
 time
     Show the current date and time.
 
@@ -13,35 +10,50 @@ exit
 cmds
     Show all available commands.
 
-cls / clear
+cls
     Clear the shell screen.
 
-dir / ls
+list
     List contents of the current directory.
 
-cd <path>
-    Change to the specified directory.
+cp <path>
+    Change to the specified path.
 
-cd..
-    Move to the parent directory.
+cp..
+    Return to the parent path.
 
-start <path>
+exec <path>
     Start an executable program.
 
 color <option>
     Change the text color.
 
-rename <file/directory> <new_name>
+rename <file/directory>
     Rename a file or directory.
 
-create <file/directory>
-    Create a new file or directory.
+makef <file name>
+    Create a file
+
+makedirec <directory name>
+    Create a directory
 
 del <file/directory>
     Delete a file or directory.
 
-history
+his
     Show commands used in the current session.
 
-phistory
+phis
     Show commands used in past sessions.
+
+whoami
+    Show the current user name
+
+uptime
+    Show long your shell/program has been running.
+
+type <file>/<input>
+    Insert text into the file
+
+tree
+    Print contents of the current path/specific path
