@@ -52,8 +52,16 @@ whoami
 uptime
     Show long your shell/program has been running.
 
+<<<<<<< HEAD
 type <file>/<input>
     Insert text into the file
 
 tree
     Print contents of the current path/specific path
+=======
+echo <text>
+    Print anything you type
+
+tree
+    Print contents of the current path/specific path
+>>>>>>> 940118d0b044169457edf0a37e0a37a379d4ddc1
