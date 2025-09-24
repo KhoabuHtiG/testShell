@@ -33,11 +33,22 @@ namespace cmds_type {
             commandType::systemCommand::changeTextColor(args[0]);
         }},
         {"rename", [](const std::string& args) {
-            commandType::fileManamentCommand::renameFile(args);
+            if (args.empty()) {printMessage("No input detect"); return;}
+
+            size_t slashPos = args.find('/');
+            if (slashPos == std::string::npos) {
+                printMessage("Invalid format. Use: rename <file>/<new name>");
+                return;
+            }
+
+            std::string fileName = args.substr(0, slashPos);
+            std::string newName = args.substr(slashPos + 1);
+
+            commandType::fileManagementCommand::renameFile(fileName, newName);
         }},
         {"del", [](const std::string& args) {
             if (args.empty()) { printMessage("No input detect"); return; }
-            commandType::fileManamentCommand::deleteFile(args);
+            commandType::fileManagementCommand::deleteFile(args);
         }},
         {"tree", [](const std::string& args) {
             if (args.empty()){
@@ -48,11 +59,11 @@ namespace cmds_type {
         }},
         {"makef", [](const std::string& args) {
             if (args.empty()) {printMessage("No input found"); return;};
-            commandType::fileManamentCommand::makeFile(args);
+            commandType::fileManagementCommand::makeFile(args);
         }},
         {"makedirec", [](const std::string& args) {
             if (args.empty()) {printMessage("No input found"); return;};
-            commandType::fileManamentCommand::makeDirectory(args);
+            commandType::fileManagementCommand::makeDirectory(args);
         }},
         {"type", [](const std::string& args) {
             if (args.empty()) {printMessage("Invalid format. Use: type <file>/<text>"); return;}
@@ -66,7 +77,7 @@ namespace cmds_type {
             std::string fileName = args.substr(0, slashPos);
             std::string text = args.substr(slashPos + 1);
 
-            commandType::fileManamentCommand::typeLineInFile(text, fileName);
+            commandType::fileManagementCommand::typeLineInFile(text, fileName);
         }}
     };
 }

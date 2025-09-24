@@ -56,7 +56,7 @@ namespace commandType {
                     fs::current_path(path);
                     return true;
                 } else {
-                    printMessage("'"+path+"' is not recognized as a path, a file or a directory.");
+                    printMessage("'" + path + "' is not recognized as a path, a file or a directory.");
                     return false;
                 }
             } catch (const fs::filesystem_error& e) {
@@ -78,7 +78,7 @@ namespace commandType {
                     #endif
                     system(cmd.c_str());
                 } else {
-                    printMessage("The " + program + " is not recognized as a possible executed file.");
+                    printMessage("'" + program + "' is not recognized as a possible executed file.");
                 }
             } catch (fs::filesystem_error &e) {
                 printMessage("Error starting program: " + std::string(e.what()));
@@ -93,7 +93,7 @@ namespace commandType {
             fs::path root = path.empty() ? fs::current_path() : fs::path(path);
 
             if (!fs::exists(root)) {
-                std::cout << "Path not found: " << root << "\n";
+                std::cout << "Path not found: '" << root << "'\n";
                 return;
             }
 

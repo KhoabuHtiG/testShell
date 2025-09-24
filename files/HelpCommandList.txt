@@ -28,7 +28,7 @@ exec <path>
 color <option>
     Change the text color.
 
-rename <file/directory>
+rename <file/directory>/<new name>
     Rename a file or directory.
 
 makef <file name>

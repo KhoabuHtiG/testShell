@@ -49,7 +49,7 @@ namespace commandType {
                 }
             }
         }
-        static void printTime() {printMessage(getTimestamp());};
+        static void printTime() {printMessage("Current time: " + getTimestamp());};
         static void exitShell() {printMessage("Exiting shell..."); exit(0);};
         static void listCmds() {
             for (int i = 0; i < commandList.size(); i++) {
@@ -115,12 +115,13 @@ namespace commandType {
         }
         static void readPastHistoryCmds() {
             std::ifstream file(getFileFolder() / "Cmd_History_Log.txt");
-            if (file.is_open()) {
-                std::string line;
+            if (!file.is_open()) {
+                printMessage("Cannot open file");
+            }
 
-                while (std::getline(file, line)) {
-                    printMessage(line);
-                }
+            std::string line;
+            while (std::getline(file, line)) {
+                printMessage(line);
             }
         }
     };
