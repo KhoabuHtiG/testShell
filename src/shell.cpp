@@ -1,6 +1,5 @@
-#include <iostream>
-#include <string>
-#include "executer.cpp"
+#include "../include/Core.hpp"
+#include "Execute.cpp"
 
 void clearScreen() {
     #ifdef _WIN32

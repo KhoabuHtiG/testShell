@@ -57,3 +57,6 @@ type <file>/<input>
 
 tree
     Print contents of the current path/specific path
+
+path
+    Show the current working path
