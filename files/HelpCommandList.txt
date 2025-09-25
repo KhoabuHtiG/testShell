@@ -13,7 +13,7 @@ cmds
 cls
     Clear the shell screen.
 
-list
+ls
     List contents of the current directory.
 
 cp <path>
@@ -28,13 +28,13 @@ exec <path>
 color <option>
     Change the text color.
 
-rename <file/directory>/<new name>
+rn <file/directory>/<new name>
     Rename a file or directory.
 
-makef <file name>
+mkf <file name>
     Create a file
 
-makedirec <directory name>
+mkdir <directory name>
     Create a directory
 
 del <file/directory>
@@ -49,11 +49,15 @@ phis
 whoami
     Show the current user name
 
-uptime
+upt
     Show long your shell/program has been running.
 
-type <file>/<input>
-    Insert text into the file
+type
+    type <text>/<file>
+        Insert text into the file
+
+    type <text>
+        Print the text
 
 tree
     Print contents of the current path/specific path

@@ -47,7 +47,7 @@ namespace commandType {
                     }
                 }
             } catch (const fs::filesystem_error& e) {
-                printMessage("Error accessing directory: " + std::string(e.what()));
+                printMessage("ls: Error while trying to access directory: " + std::string(e.what()));
             }
         }
         static bool accessDirectory(const std::string path) {
@@ -56,11 +56,11 @@ namespace commandType {
                     fs::current_path(path);
                     return true;
                 } else {
-                    printMessage("'" + path + "' is not recognized as a path, a file or a directory.");
+                    printMessage("cp: The '" + path + "' is not recognized as a path, a file or a directory.");
                     return false;
                 }
             } catch (const fs::filesystem_error& e) {
-                printMessage("Error accessing directory: " + std::string(e.what()));
+                printMessage("cp: Error while trying to access directory: " + std::string(e.what()));
                 return false;
             }
         }
@@ -78,10 +78,10 @@ namespace commandType {
                     #endif
                     system(cmd.c_str());
                 } else {
-                    printMessage("'" + program + "' is not recognized as a possible executed file.");
+                    printMessage("exec: The '" + program + "' is not recognized as a possible executed file.");
                 }
             } catch (fs::filesystem_error &e) {
-                printMessage("Error starting program: " + std::string(e.what()));
+                printMessage("exec: Error while trying to start program: " + std::string(e.what()));
             }
             return;
         }
@@ -93,7 +93,7 @@ namespace commandType {
             fs::path root = path.empty() ? fs::current_path() : fs::path(path);
 
             if (!fs::exists(root)) {
-                std::cout << "Path not found: '" << root << "'\n";
+                std::cout << "tree: Path not found: '" << root << "'\n";
                 return;
             }
 

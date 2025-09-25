@@ -53,4 +53,4 @@ static void addToHistory(const std::string cmd) {
 void printMessage(const std::string message) {std::cout << message << '\n'; return;}
 void executeCommand(const std::string& command);
 void handleCommandError(const std::string& command) {
-    printMessage(command + " : The term '" +command+"' is not recognized as the name of a cmdlet, function, script file, or operable program."); return;}
+    printMessage(command + " : The term is not recognized as the name of a cmdlet, function, script file, or operable program."); return;}

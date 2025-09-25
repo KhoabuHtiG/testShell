@@ -15,29 +15,30 @@ namespace cmds_type {
         {"his", commandType::systemCommand::readSessionHistoryCmds},
         {"phis", commandType::systemCommand::readPastHistoryCmds},
         {"whoami", commandType::systemCommand::whoami},
-        {"uptime", commandType::systemCommand::uptime},
+        {"upt", commandType::systemCommand::uptime},
     };
     static std::unordered_map<std::string, std::function<void(std::string)>> arg_cmds {
-        {"list", [](const std::string& args) {
+        {"ls", [](const std::string& args) {
             commandType::navigationCommand::listItemsInDirectory(args.empty() ? fs::current_path().string() : args);
         }},
         {"cp", [](const std::string& args) {
+            printMessage("cp: Invalid format. Use 'help' for usage.");
             commandType::navigationCommand::accessDirectory(args);
         }},
         {"exec", [](const std::string& args) {
-            if (args.empty()) { printMessage("No input detect"); return; }
+            if (args.empty()) { printMessage("exec: Invalid format. Use 'help' for usage."); return; }
             commandType::navigationCommand::executeProgram(args);
         }},
         {"color", [](const std::string& args) {
-            if (args.empty()) { printMessage("No input detect"); return; }
+            if (args.empty()) { printMessage("color: Invalid format. Use 'help' for usage."); return; }
             commandType::systemCommand::changeTextColor(args[0]);
         }},
-        {"rename", [](const std::string& args) {
-            if (args.empty()) {printMessage("No input detect"); return;}
+        {"rn", [](const std::string& args) {
+            if (args.empty()) {printMessage("rn: Invalid format. Use 'help' for usage."); return;}
 
             size_t slashPos = args.find('/');
             if (slashPos == std::string::npos) {
-                printMessage("Invalid format. Use: rename <file>/<new name>");
+                printMessage("rn: Invalid format. Use 'help' for usage.");
                 return;
             }
 
@@ -47,7 +48,7 @@ namespace cmds_type {
             commandType::fileManagementCommand::renameFile(fileName, newName);
         }},
         {"del", [](const std::string& args) {
-            if (args.empty()) { printMessage("No input detect"); return; }
+            if (args.empty()) {printMessage("del: Invalid format. Use 'help' for usage."); return; }
             commandType::fileManagementCommand::deleteFile(args);
         }},
         {"tree", [](const std::string& args) {
@@ -57,20 +58,20 @@ namespace cmds_type {
                 commandType::navigationCommand::tree(args);
             }
         }},
-        {"makef", [](const std::string& args) {
-            if (args.empty()) {printMessage("No input found"); return;};
+        {"mkf", [](const std::string& args) {
+            if (args.empty()) {printMessage("mkf: Invalid format. Use 'help' for usage."); return;};
             commandType::fileManagementCommand::makeFile(args);
         }},
-        {"makedirec", [](const std::string& args) {
-            if (args.empty()) {printMessage("No input found"); return;};
+        {"mkdir", [](const std::string& args) {
+            if (args.empty()) {printMessage("mkdir: Invalid format. Use 'help' for usage."); return;};
             commandType::fileManagementCommand::makeDirectory(args);
         }},
         {"type", [](const std::string& args) {
-            if (args.empty()) {printMessage("Invalid format. Use: type <file>/<text>"); return;}
+            if (args.empty()) {printMessage("type: Invalid format. Use 'help' for usage."); return;}
 
             size_t slashPos = args.find('/');
             if (slashPos == std::string::npos) {
-                printMessage("Invalid format. Use: type <file>/<text>");
+                printMessage(args);
                 return;
             }
 
@@ -78,6 +79,11 @@ namespace cmds_type {
             std::string text = args.substr(slashPos + 1);
 
             commandType::fileManagementCommand::typeLineInFile(text, fileName);
+        }},
+        {"rd", [](const std::string& args) {
+            if (args.empty()) {printMessage("rd: Invalid format. Use 'help' for usage."); return;}
+
+            commandType::fileManagementCommand::readFileContent(args);
         }}
     };
 }

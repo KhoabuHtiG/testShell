@@ -3,9 +3,10 @@
 
 std::vector<std::string> commandList = {
     "|| help", "|| time", "|| exit", "|| cmds", "|| cls",
-    "|| list", "|| cp", "|| cp..", "|| exec", "|| color", "|| rename",
-    "|| del", "|| his", "|| phis", "|| whoami", "|| uptime",
-    "|| tree", "|| makef", "|| makedir", "|| type", "|| path"
+    "|| ls", "|| cp", "|| cp..", "|| exec", "|| color", "|| rn",
+    "|| del", "|| his", "|| phis", "|| whoami", "|| upt",
+    "|| tree", "|| mkf", "|| mkdir", "|| type", "|| path",
+    "|| rd",
 };
 static std::vector<std::string> colors {
     "   0 = Black         8 = Gray",
@@ -59,10 +60,10 @@ namespace commandType {
         static void clearScreen() {
             #ifdef _WIN32
                 system("cls");
-                printMessage("Type 'cmds' to get list of commands.");
+                printMessage("Use 'cmds' to get list of commands.");
             #else
                 system("clear");
-                printMessage("Type 'cmds' to get list of commands.");
+                printMessage("Use 'cmds' to get list of commands.");
             #endif
         };
         static void whoami() {
@@ -116,7 +117,7 @@ namespace commandType {
         static void readPastHistoryCmds() {
             std::ifstream file(getFileFolder() / "Cmd_History_Log.txt");
             if (!file.is_open()) {
-                printMessage("Cannot open file");
+                printMessage("phis: Failed to open log file.");
             }
 
             std::string line;

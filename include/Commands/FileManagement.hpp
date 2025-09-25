@@ -7,76 +7,73 @@ namespace commandType {
         static void renameFile(const std::string path, const std::string name) {
             try {
                 if (!fs::exists(path)) {
-                    printMessage("The '" + path + "' is not recognized as a path, a file or a directory.");
+                    printMessage("rn: The '" + path + "' is not recognized as a path, a file or a directory.");
                     return;
                 }
 
                 std::string newFileName = name, oldFileName = path;
                 if (std::rename(oldFileName.c_str(), newFileName.c_str()) != 0) {
-                    printMessage("Error while renaming name.");
+                    printMessage("rn: Failed to rename '" + path + "'");
                 } else {
-                    printMessage("Renamed file '" + oldFileName + "' to '" + newFileName + "'");
+                    printMessage("rn: Renamed file '" + oldFileName + "' to '" + newFileName + "'");
                 }
             } catch (fs::filesystem_error& e) {
-                printMessage("Error while remaming file: " + std::string(e.what()));
+                printMessage("rn: Error while trying to rename the file or the direcstory: " + std::string(e.what()));
             }
             return;
         }
         static void deleteFile(const std::string path) {
             try {
                 if (!fs::exists(path)) {
-                    printMessage("No such path found with this name.");
+                    printMessage("del: The '" + path + "' is not recognized as a path, a file or a directory.");
                 }
 
                 if (fs::is_regular_file(path)) {
                     fs::remove(path);
-                    printMessage("Removed '" + path + "'");
+                    printMessage("del: Deleted '" + path + "'");
                 } else if (fs::is_directory(path)) {
                     fs::remove_all(path);
-                    printMessage("Removed '" + path);
+                    printMessage("del: Deleted '" + path + "'");
                 }
             } catch (fs::filesystem_error& e) {
-                std::string error = e.what();
-                printMessage("Error deleting file or directory: " + error);
+                printMessage("del: Error while trying to delete the file or the directory: " + std::string(e.what()));
             }
             return;
         }
         static void makeFile(const std::string name) {
             try {
                 if (fs::exists(name)) {
-                    printMessage("File already existed");
+                    printMessage("mkf: Cannot put the same name as the existed one.");
                 }
 
                 std::ofstream file(name);
             } catch (const fs::filesystem_error& e) {
-                std::string error = e.what();
-                printMessage("Error: " + error);
+                printMessage("mkf: Error while trying to create the file: " + std::string(e.what()));
             }
         }
         static void makeDirectory(const std::string direcName) {
             try {
                 if (fs::exists(direcName)) {
-                    printMessage("Directory already existed");
+                    printMessage("mkdir: Cannot put the same name as the existed one.");
                     return;
                 }
 
                 fs::create_directory(direcName);
             } catch (const fs::filesystem_error& e) {
-                std::string error = e.what();
-                printMessage("Error: " + error);
+                printMessage("mkdir: Error while trying create the directory: " + std::string(e.what()));
             }
         }
         static void typeLineInFile(const std::string input, const std::string file) {
             try {
                 if (!fs::exists(file)) {
-                    printMessage("No such file existed with this name.");
+                    printMessage("type: The '" + file + "' is not recognized as a path, a file or a directory.");
                     return;
                 }
 
                 std::ofstream inFile(file, std::ios::app);
 
                 if (!inFile.is_open()) {
-                    printMessage("Cannot open file: '" + file + "'");
+                    printMessage("type: Cannot open file: '" + file + "'");
                 }
 
                 inFile << input << '\n';
@@ -85,19 +82,25 @@ namespace commandType {
                 return;
             } catch (const fs::filesystem_error& e) {
                 std::string error = e.what();
-                printMessage("Error: " + error);
+                printMessage("type: Error while trying to insert content into file: " + error);
             }
-        }
+        }    
         static void readFileContent(const std::string file) {
             if (!fs::exists(file)) {
-                printMessage("No such file found with this name.");
+                printMessage("rd: The '" + file + "' is not recognized as a path, a file or a directory.");
                 return; 
+            }
+
+            if (!fs::is_regular_file(file)) {
+                printMessage("rd: The '" + file +"' is not regconized as a readable file");
             }
 
             std::ifstream readFile(file, std::ios::in);
             if (!readFile.is_open()) {
-                printMessage("Cannot open file: '" + file + "'");
+                printMessage("rd: Cannot open file: '" + file + "'");
             }
+
+            printMessage("-----");
 
             std::string line;
             while (std::getline(readFile, line)) {
