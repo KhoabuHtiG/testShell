@@ -97,5 +97,19 @@ namespace cmds_type {
                 printMessage("No manual entry for: " + args);
             }
         }},
+        {"mv", [](const std::string& args) {
+            if (args.empty()) {printMessage("mv: Invalid format."); return;}
+
+            size_t slashPos = args.find('/');
+            if (slashPos == std::string::npos) {
+                printMessage("Invalid format.");
+                return;
+            }
+
+            std::string fileName = args.substr(0, slashPos);
+            std::string destination = args.substr(slashPos + 1);
+
+            commandType::fileManagementCommand::moveFile(fileName, destination);
+        }}
     };
 }

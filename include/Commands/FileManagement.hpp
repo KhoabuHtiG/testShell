@@ -105,5 +105,24 @@ namespace commandType {
                 printMessage(line);
             }
         }
+        static void moveFile(const std::string& file, const std::string& destination) {
+            try {
+                if (!fs::exists(file)) {
+                    printMessage("mv: The source '" + file + "' does not exist.");
+                    return;
+                }
+
+                if (fs::is_directory(destination)) {
+                    fs::path destPath = fs::path(destination) / fs::path(file).filename();
+                    fs::rename(file, destPath);
+                    printMessage("mv: Moved '" + file + "' into directory '" + destination + "'");
+                } else {
+                    fs::rename(file, destination);
+                    printMessage("mv: Moved '" + file + "' to '" + destination + "'");
+                }
+            } catch (const fs::filesystem_error& e) {
+                printMessage("mv: Error moving file or directory: " + std::string(e.what()));
+            }
+        }
     };
 }

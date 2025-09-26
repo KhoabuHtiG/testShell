@@ -25,4 +25,5 @@ static std::unordered_map<std::string, std::string> cmds_doc {
     {"echo", "echo <text>\n   Print text to the screen"},
     {"rd", "rd <file>\n   Read and display the contents of a file"},
     {"type", "type <text>\n   Print text\ntype <file>/<text>\n   Insert text in the file"},
+    {"mv", "mv <file>/<destination>\n   Move a file to a place"},
 };
