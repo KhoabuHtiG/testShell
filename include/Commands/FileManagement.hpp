@@ -72,9 +72,7 @@ namespace commandType {
 
                 std::ofstream inFile(file, std::ios::app);
 
-                if (!inFile.is_open()) {
-                    printMessage("type: Cannot open file: '" + file + "'");
-                }
+                if (!inFile.is_open()) printMessage("type: Cannot open file: '" + file + "'");
 
                 inFile << input << '\n';
 

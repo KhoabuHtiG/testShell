@@ -3,42 +3,44 @@
 #include "Commands/FileManagement.hpp"
 #include "Commands/Navigation.hpp"
 #include "Commands/System.hpp"
+#include "cmds_doc.hpp"
 
 namespace cmds_type {
     static std::unordered_map<std::string, std::function<void()>> reg_cmds = {
         {"time", commandType::systemCommand::printTime},
         {"exit", commandType::systemCommand::exitShell},
-        {"help", commandType::systemCommand::help},
+        {"clear", commandType::systemCommand::clearScreen},
         {"cls", commandType::systemCommand::clearScreen},
         {"cmds", commandType::systemCommand::listCmds},
-        {"cp..", commandType::navigationCommand::returnToParentDirectory},
+        {"cd..", commandType::navigationCommand::returnToParentDirectory},
         {"his", commandType::systemCommand::readSessionHistoryCmds},
         {"phis", commandType::systemCommand::readPastHistoryCmds},
         {"whoami", commandType::systemCommand::whoami},
-        {"upt", commandType::systemCommand::uptime},
+        {"uptime", commandType::systemCommand::uptime},
+        {"path", commandType::navigationCommand::showCurrentPath},
     };
     static std::unordered_map<std::string, std::function<void(std::string)>> arg_cmds {
         {"ls", [](const std::string& args) {
             commandType::navigationCommand::listItemsInDirectory(args.empty() ? fs::current_path().string() : args);
         }},
-        {"cp", [](const std::string& args) {
-            printMessage("cp: Invalid format. Use 'help' for usage.");
+        {"cd", [](const std::string& args) {
+            printMessage("cd: Invalid format.");
             commandType::navigationCommand::accessDirectory(args);
         }},
         {"exec", [](const std::string& args) {
-            if (args.empty()) { printMessage("exec: Invalid format. Use 'help' for usage."); return; }
+            if (args.empty()) { printMessage("exec: Invalid format."); return; }
             commandType::navigationCommand::executeProgram(args);
         }},
         {"color", [](const std::string& args) {
-            if (args.empty()) { printMessage("color: Invalid format. Use 'help' for usage."); return; }
+            if (args.empty()) { printMessage("color: Invalid format."); return; }
             commandType::systemCommand::changeTextColor(args[0]);
         }},
         {"rn", [](const std::string& args) {
-            if (args.empty()) {printMessage("rn: Invalid format. Use 'help' for usage."); return;}
+            if (args.empty()) {printMessage("rn: Invalid format."); return;}
 
             size_t slashPos = args.find('/');
             if (slashPos == std::string::npos) {
-                printMessage("rn: Invalid format. Use 'help' for usage.");
+                printMessage("rn: Invalid format.");
                 return;
             }
 
@@ -48,7 +50,7 @@ namespace cmds_type {
             commandType::fileManagementCommand::renameFile(fileName, newName);
         }},
         {"del", [](const std::string& args) {
-            if (args.empty()) {printMessage("del: Invalid format. Use 'help' for usage."); return; }
+            if (args.empty()) {printMessage("del: Invalid format."); return; }
             commandType::fileManagementCommand::deleteFile(args);
         }},
         {"tree", [](const std::string& args) {
@@ -58,16 +60,16 @@ namespace cmds_type {
                 commandType::navigationCommand::tree(args);
             }
         }},
-        {"mkf", [](const std::string& args) {
-            if (args.empty()) {printMessage("mkf: Invalid format. Use 'help' for usage."); return;};
+        {"touch", [](const std::string& args) {
+            if (args.empty()) {printMessage("touch: Invalid format."); return;};
             commandType::fileManagementCommand::makeFile(args);
         }},
         {"mkdir", [](const std::string& args) {
-            if (args.empty()) {printMessage("mkdir: Invalid format. Use 'help' for usage."); return;};
+            if (args.empty()) {printMessage("mkdir: Invalid format."); return;};
             commandType::fileManagementCommand::makeDirectory(args);
         }},
         {"type", [](const std::string& args) {
-            if (args.empty()) {printMessage("type: Invalid format. Use 'help' for usage."); return;}
+            if (args.empty()) {printMessage("type: Invalid format."); return;}
 
             size_t slashPos = args.find('/');
             if (slashPos == std::string::npos) {
@@ -81,9 +83,19 @@ namespace cmds_type {
             commandType::fileManagementCommand::typeLineInFile(text, fileName);
         }},
         {"rd", [](const std::string& args) {
-            if (args.empty()) {printMessage("rd: Invalid format. Use 'help' for usage."); return;}
+            if (args.empty()) {printMessage("rd: Invalid format."); return;}
 
             commandType::fileManagementCommand::readFileContent(args);
-        }}
+        }},
+        {"help", [](const std::string& args) {
+            if (args.empty()) {printMessage("help: Invalid format."); return;}
+
+            auto it = cmds_doc.find(args);
+            if (it != cmds_doc.end()) {
+                printMessage(it->second);
+            } else {
+                printMessage("No manual entry for: " + args);
+            }
+        }},
     };
 }

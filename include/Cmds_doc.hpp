@@ -1,0 +1,28 @@
+#pragma once
+#include "Core.hpp"
+
+static std::unordered_map<std::string, std::string> cmds_doc {
+    {"time", "time\n   Show the current system time"},
+    {"exit", "exit\n   Exit the shell"},
+    {"clear", "clear\n   Clear the screen"},
+    {"cls", "cls\n   Clear the screen"},
+    {"cmds", "cmds\n   Show all available commands"},
+    {"cd..", "cd..\n   Move to the parent directory"},
+    {"his", "his\n   Show command history of this session"},
+    {"phis", "phis\n   Show command history from past sessions"},
+    {"whoami", "whoami\n   Display the current user"},
+    {"uptime", "uptime\n   Show how long the shell has been running"},
+    {"path", "path\n   Display the current working directory"},
+    {"ls", "ls\n   List contents of the current directory"},
+    {"cd", "cd <directory>\n   Change the current directory"},
+    {"exec", "exec <program>\n   Run a program or script"},
+    {"color", "color <code>\n   Change the shell text color"},
+    {"rn", "rn <old>/<new>\n   Rename a file or directory"},
+    {"del", "del <file>\n   Delete a file"},
+    {"tree", "tree\n   Display directory structure as a tree"},
+    {"touch", "touch <file>\n   Create a new empty file"},
+    {"mkdir", "mkdir <name>\n   Create a new directory"},
+    {"echo", "echo <text>\n   Print text to the screen"},
+    {"rd", "rd <file>\n   Read and display the contents of a file"},
+    {"type", "type <text>\n   Print text\ntype <file>/<text>\n   Insert text in the file"},
+};

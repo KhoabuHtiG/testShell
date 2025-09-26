@@ -85,10 +85,6 @@ namespace commandType {
             }
             return;
         }
-        static void showCurrentPath() {
-            std::string currentPath = fs::current_path().string();
-            printMessage(currentPath);
-        }
         static void tree(const fs::path path) {
             fs::path root = path.empty() ? fs::current_path() : fs::path(path);
 
@@ -98,9 +94,10 @@ namespace commandType {
             }
 
             std::cout << root.string() << "\n";
-            for (const auto& entry : fs::directory_iterator(root)) {
-                printTree(entry.path(), 1);
-            }
+            for (const auto& entry : fs::directory_iterator(root)) printTree(entry.path(), 1);
+        }
+        static void showCurrentPath() {
+            printMessage(fs::current_path().string());
         }
     };
 }

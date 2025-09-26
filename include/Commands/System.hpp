@@ -2,10 +2,10 @@
 #include "../Core.hpp"
 
 std::vector<std::string> commandList = {
-    "|| help", "|| time", "|| exit", "|| cmds", "|| cls",
-    "|| ls", "|| cp", "|| cp..", "|| exec", "|| color", "|| rn",
-    "|| del", "|| his", "|| phis", "|| whoami", "|| upt",
-    "|| tree", "|| mkf", "|| mkdir", "|| type", "|| path",
+    "|| help", "|| time", "|| exit", "|| cmds", "|| clear/cls",
+    "|| ls", "|| cd", "|| cd..", "|| exec", "|| color", "|| rn",
+    "|| del", "|| his", "|| phis", "|| whoami", "|| uptime",
+    "|| tree", "|| touch", "|| mkdir", "|| type", "|| path",
     "|| rd",
 };
 static std::vector<std::string> colors {
@@ -53,9 +53,7 @@ namespace commandType {
         static void printTime() {printMessage("Current time: " + getTimestamp());};
         static void exitShell() {printMessage("Exiting shell..."); exit(0);};
         static void listCmds() {
-            for (int i = 0; i < commandList.size(); i++) {
-                printMessage(commandList[i]);
-            }
+            for (int i = 0; i < commandList.size(); i++) printMessage(commandList[i]);
         };
         static void clearScreen() {
             #ifdef _WIN32
@@ -72,9 +70,7 @@ namespace commandType {
                 DWORD username_len = UNLEN + 1;
                 if (GetUserNameA(username, &username_len)) {
                     std::cout << username << "\n";
-                } else {
-                    std::cerr << "Error getting username.\n";
-                }
+                } else std::cerr << "Error getting username.\n";
             #elif __linux__
                 const char* username = getenv("USER"); // env var
                 if (username) {
@@ -102,28 +98,19 @@ namespace commandType {
         static void changeTextColor(char option) {
             if (color_.find(option) != color_.end()) {
                 color_[option]();
-            } else {
-                for (int i = 0; i < colors.size(); ++i) {
-                    printMessage(colors[i]);
-                }
-            }
+            } else for (int i = 0; i < colors.size(); ++i) printMessage(colors[i]);
+    
             return;
         }
         static void readSessionHistoryCmds() {
-            for (int i = 0; i < cmds_history.size(); ++i) {
-                printMessage(cmds_history[i]);
-            }
+            for (int i = 0; i < cmds_history.size(); ++i) printMessage(cmds_history[i]);
         }
         static void readPastHistoryCmds() {
             std::ifstream file(getFileFolder() / "Cmd_History_Log.txt");
-            if (!file.is_open()) {
-                printMessage("phis: Failed to open log file.");
-            }
+            if (!file.is_open()) printMessage("phis: Failed to open log file.");
 
             std::string line;
-            while (std::getline(file, line)) {
-                printMessage(line);
-            }
+            while (std::getline(file, line)) printMessage(line);
         }
     };
 }
