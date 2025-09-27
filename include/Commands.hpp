@@ -66,7 +66,17 @@ namespace cmds_type {
         }},
         {"mkdir", [](const std::string& args) {
             if (args.empty()) {printMessage("mkdir: Invalid format."); return;};
-            commandType::fileManagementCommand::makeDirectory(args);
+
+            size_t slashPos = args.find('/');
+            if (slashPos == std::string::npos) {
+                commandType::fileManagementCommand::makeDirectory(args, "");
+                return;
+            }
+
+            std::string mainDirec = args.substr(0, slashPos);
+            std::string subDirec = args.substr(slashPos + 1);
+
+            commandType::fileManagementCommand::makeDirectory(mainDirec, subDirec);
         }},
         {"type", [](const std::string& args) {
             if (args.empty()) {printMessage("type: Invalid format."); return;}

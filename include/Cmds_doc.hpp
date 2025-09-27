@@ -21,7 +21,7 @@ static std::unordered_map<std::string, std::string> cmds_doc {
     {"del", "del <file>\n   Delete a file"},
     {"tree", "tree\n   Display directory structure as a tree"},
     {"touch", "touch <file>\n   Create a new empty file"},
-    {"mkdir", "mkdir <name>\n   Create a new directory"},
+    {"mkdir", "mkdir <name>\n   Create a new directory\nmkdir <directory>/<sub directory>\n   Create a new directory in an existed one or a new one"},
     {"echo", "echo <text>\n   Print text to the screen"},
     {"rd", "rd <file>\n   Read and display the contents of a file"},
     {"type", "type <text>\n   Print text\ntype <file>/<text>\n   Insert text in the file"},

@@ -51,18 +51,20 @@ namespace commandType {
                 printMessage("mkf: Error while trying to create the file: " + std::string(e.what()));
             }
         }
-        static void makeDirectory(const std::string direcName) {
+        static void makeDirectory(const std::string direcName, const std::string subDirec) {
             try {
                 if (fs::exists(direcName)) {
-                    printMessage("mkdir: Cannot put the same name as the existed one.");
+                    if (subDirec.empty()) printMessage("mkdir: Cannot put the same name as the existed one.");
+                    fs::create_directories(direcName + "/" + subDirec);
                     return;
                 }
 
-                fs::create_directory(direcName);
+                if (subDirec.empty()) {fs::create_directory(direcName); return;}
+                    
+                fs::create_directories(direcName + "/" + subDirec);
             } catch (const fs::filesystem_error& e) {
-                printMessage("mkdir: Error while trying create the directory: " + std::string(e.what()));
+                printMessage("mkdir: Error while trying create the directory: " + std::string(e.what())); }
             }
-        }
         static void typeLineInFile(const std::string input, const std::string file) {
             try {
                 if (!fs::exists(file)) {
