@@ -21,7 +21,7 @@
 namespace fs = std::filesystem;
 static auto shellStartTime = std::chrono::steady_clock::now();
 
-fs::path getFileFolder() {return fs::path("../files");}
+fs::path getFileFolder() {return fs::path("../file");}
 std::string getTimestamp() {
     auto now = std::chrono::system_clock::now();
     std::time_t time = std::chrono::system_clock::to_time_t(now);
