@@ -110,6 +110,20 @@ namespace cmds_type {
             std::string destination = args.substr(slashPos + 1);
 
             commandType::fileManagementCommand::moveFile(fileName, destination);
+        }},
+        {"dup", [](const std::string& args) {
+            if (args.empty()) {printMessage("dup: Invalid format."); return;}
+
+            size_t slashPos = args.find('/');
+            if (slashPos == std::string::npos) {
+                commandType::fileManagementCommand::duplicateFile(args, "");
+                return;
+            }
+
+            std::string fileName = args.substr(0, slashPos);
+            std::string destination = args.substr(slashPos + 1);
+
+            commandType::fileManagementCommand::duplicateFile(fileName, destination);
         }}
     };
 }

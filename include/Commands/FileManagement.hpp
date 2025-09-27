@@ -3,7 +3,7 @@
 
 namespace commandType {
     class fileManagementCommand {
-    public:    
+    public:
         static void renameFile(const std::string path, const std::string name) {
             try {
                 if (!fs::exists(path)) {
@@ -122,6 +122,34 @@ namespace commandType {
                 }
             } catch (const fs::filesystem_error& e) {
                 printMessage("mv: Error moving file or directory: " + std::string(e.what()));
+            }
+        }
+        static void duplicateFile(const std::string& file, std::string destination) {
+            try {
+                if (!fs::exists(file)) {
+                    printMessage("dup: The '" + file + "' is not recognized as a path, a file or a directory.");
+                    return;
+                }
+
+                if (destination.empty()) {
+                    destination = file + "_copy";
+                    if (fs::exists(destination)) {
+                        destination = file + "_copy1";
+                    }
+                }
+
+                if (fs::is_directory(file)) {
+                    fs::copy(file, destination, fs::copy_options::recursive | fs::copy_options::overwrite_existing);
+                    printMessage("dup: Duplicated directory '" + file + "' to '" + destination + "'");
+                } else if (fs::is_regular_file(file)) {
+                    fs::copy(file, destination, fs::copy_options::overwrite_existing);
+                    printMessage("dup: Duplicated file '" + file + "' to '" + destination + "'");
+                } else {
+                    printMessage("dup: The path '" + file + "' is neither a file nor a directory.");
+                }
+            }
+            catch (fs::filesystem_error& e) {
+                printMessage("dup: Error while duplicating: " + std::string(e.what()));
             }
         }
     };
