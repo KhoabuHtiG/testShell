@@ -11,7 +11,6 @@ void clearScreen() {
 
 int main() {
     clearScreen();
-    std::cout << "Use 'cmds' to get the list of available commands.\n";
 
     while (true) {
         std::string input;

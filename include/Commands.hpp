@@ -153,23 +153,23 @@ namespace cmds_type {
 
             commandType::fileManagementCommand::duplicateFile(fileName, destination);
         }},
-        /*{"prop", [](const std::string& args) {
+        {"prop", [](const std::string& args) {
             if (args.empty()) {printMessage("prop: Invalid format."); return;}
 
-            std::string file;
-            char option;
+            std::string file = args;
+            char option = ' ';
 
             if (args[0] == '-') {
+                option = args[1];
                 size_t spacePos = args.find(' ');
-                if (spacePos == std::string::npos) {
-                    commandType::fileManagementCommand::showFileProperties(args, ' ');
-                }
-
-                char option = args[spacePos - 1];
-                std::string fileName = args.substr(spacePos + 1);
-
-                commandType::fileManagementCommand::showFileProperties(fileName, option);
+                if (spacePos != std::string::npos) {
+                    file = args.substr(spacePos + 1);
+                } //else {
+                    //file = fs::current_path().string();
+                //}
             }
-        }}*/
+
+            commandType::fileManagementCommand::showFileProperties(file, option);
+        }}
     };
 }

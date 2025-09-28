@@ -154,7 +154,7 @@ namespace commandType {
                 printMessage("dup: Error while duplicating: " + std::string(e.what()));
             }
         }
-        /*static void showFileProperties(const std::string& file, const char option) {
+        static void showFileProperties(const std::string& file, const char option) {
             std::string fileType;
 
             if (!fs::exists(file)) {
@@ -170,19 +170,27 @@ namespace commandType {
                 fileType = "Type: Other";
             }
 
+            printMessage("File name: " + file);
+
             switch (option) {
                 case ' ':
-                    printMessage("File name: " + file);
                     printMessage(fileType);
-                    printMessage("Size: " + sizeof(file));
+                    printMessage("Size: " + std::to_string(sizeof(file)) + " bytes");
                     printMessage("Path: " + fs::absolute(file).string());
                     break;
-                case 'a':
+                case 't':
+                    printMessage(fileType);
+                    break;
+                case 's':
+                    printMessage("Size: " + std::to_string(sizeof(file)) + " bytes");
+                    break;
+                case 'p':
+                    printMessage("Path: " + fs::absolute(file).string());
                     break;
                 default:
-                    printMessage("prop: Undefined option.");
+                    printMessage("prop: Undefined option");
                     break;
             }
-        }*/
+        }
     };
 }
