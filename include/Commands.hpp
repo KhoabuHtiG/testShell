@@ -21,7 +21,25 @@ namespace cmds_type {
     };
     static std::unordered_map<std::string, std::function<void(std::string)>> arg_cmds {
         {"ls", [](const std::string& args) {
-            commandType::navigationCommand::listItemsInDirectory(args.empty() ? fs::current_path().string() : args);
+            if (args.empty()) {
+                commandType::navigationCommand::listItemsInDirectory(fs::current_path().string(), ' ');
+                return;
+            }
+
+            char option = ' ';
+            std::string place = args;
+
+            if (args[0] == '-') {
+                option = args[1];
+                size_t spacePos = args.find(' ');
+                if (spacePos != std::string::npos) {
+                    place = args.substr(spacePos + 1);
+                } else {
+                    place = fs::current_path().string();
+                }
+            }
+
+            commandType::navigationCommand::listItemsInDirectory(place, option);
         }},
         {"cd", [](const std::string& args) {
             if (args.empty()) {printMessage("cd: Invalid format."); return;}

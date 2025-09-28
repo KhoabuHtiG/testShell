@@ -33,17 +33,39 @@ static void printTree(const fs::path& path, int depth = 0) {
 namespace commandType {
     class navigationCommand {
     public:
-        static void listItemsInDirectory(const std::string path) {
+        static void listItemsInDirectory(const std::string& path, char option) {
             try {
-                printMessage("\n      Directory: " + path + '\n');
+                printMessage("\nDirectory: " + path + "\n");
+
+                if (!fs::is_directory(path)) {
+                    printMessage("ls: The '" + path + "' is not recognized as a directory");
+                    return;
+                }
+
                 for (const auto& entry : fs::directory_iterator(path)) {
-                    if (entry.is_directory()) {
-                        uintmax_t size = getDirectorySize(entry);
-                        printMessage("|| <DIR>   " + entry.path().filename().string());
-                    } else if (entry.is_regular_file()) {
-                        printMessage("||         " + entry.path().filename().string());
-                    } else {
-                        printMessage("|| <OTHER> " + entry.path().filename().string());
+                    std::string name = entry.path().filename().string();
+                    if (option == ' ') {
+                        if (entry.is_directory()) {
+                            printMessage("|| <DIR>   " + name);
+                        } else if (entry.is_regular_file()) {
+                            printMessage("||         " + name);
+                        } else {
+                            printMessage("|| <OTHER> " + name);
+                        }
+                    } else if (option == 's') {
+                        if (entry.is_directory()) {
+                            uintmax_t size = getDirectorySize(entry);
+                            printMessage("|| <DIR>   " + name + " | Size: " + std::to_string(size) + " bytes");
+                        } else if (entry.is_regular_file()) {
+                            uintmax_t size = fs::file_size(entry);
+                            printMessage("||         " + name + " | Size: " + std::to_string(size) + " bytes");
+                        } else {
+                            printMessage("|| <OTHER> " + name);
+                        }
+                    }
+                    else {
+                        printMessage("ls: Undefined option -" + std::string(1, option));
+                        break;
                     }
                 }
             } catch (const fs::filesystem_error& e) {
