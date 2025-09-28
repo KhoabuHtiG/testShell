@@ -39,11 +39,11 @@ namespace commandType {
                 for (const auto& entry : fs::directory_iterator(path)) {
                     if (entry.is_directory()) {
                         uintmax_t size = getDirectorySize(entry);
-                        printMessage("|| <DIR>   " + entry.path().filename().string() + " | Length: " + std::to_string(size));
+                        printMessage("|| <DIR>   " + entry.path().filename().string());
                     } else if (entry.is_regular_file()) {
-                        printMessage("||         " + entry.path().filename().string() + " | Length: " + std::to_string(fs::file_size(entry.path())));
+                        printMessage("||         " + entry.path().filename().string());
                     } else {
-                        printMessage("|| <OTHER> " + entry.path().filename().string() + " | Length: " + std::to_string(fs::file_size(entry.path())));
+                        printMessage("|| <OTHER> " + entry.path().filename().string());
                     }
                 }
             } catch (const fs::filesystem_error& e) {

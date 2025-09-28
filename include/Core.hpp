@@ -13,7 +13,7 @@
 #ifdef _WIN32
     #include <windows.h>
     #include <Lmcons.h>
-#elif __linux__
+#elif defined(__linux__)
     #include <unistd.h>
     #include <pwd.h>
 #endif

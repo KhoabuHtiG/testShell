@@ -1,5 +1,4 @@
 # operting shell
-This is a shell for interacting between the user and the kernel.
-This is a project for practicing, so improvements is needed.
+This is a project for practising, so improvements is needed.
 
-If you need help with commands in here, use 'help' for usage and explaination.
+If you need help with commands in there, use 'cmds' for available commands.

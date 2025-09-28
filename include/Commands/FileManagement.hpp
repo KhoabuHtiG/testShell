@@ -154,5 +154,35 @@ namespace commandType {
                 printMessage("dup: Error while duplicating: " + std::string(e.what()));
             }
         }
+        /*static void showFileProperties(const std::string& file, const char option) {
+            std::string fileType;
+
+            if (!fs::exists(file)) {
+                printMessage("prop: The '" + file + "' is not recognized as a file.");
+                return;
+            }
+
+            if (fs::is_regular_file(file)) {
+                fileType = "Type: Regular file";
+            } else if (fs::is_directory(file)) {
+                fileType = "Type: Directory";
+            } else {
+                fileType = "Type: Other";
+            }
+
+            switch (option) {
+                case ' ':
+                    printMessage("File name: " + file);
+                    printMessage(fileType);
+                    printMessage("Size: " + sizeof(file));
+                    printMessage("Path: " + fs::absolute(file).string());
+                    break;
+                case 'a':
+                    break;
+                default:
+                    printMessage("prop: Undefined option.");
+                    break;
+            }
+        }*/
     };
 }

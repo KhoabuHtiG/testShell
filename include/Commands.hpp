@@ -3,7 +3,7 @@
 #include "Commands/FileManagement.hpp"
 #include "Commands/Navigation.hpp"
 #include "Commands/System.hpp"
-#include "cmds_doc.hpp"
+#include "Cmds_doc.hpp"
 
 namespace cmds_type {
     static std::unordered_map<std::string, std::function<void()>> reg_cmds = {
@@ -24,7 +24,7 @@ namespace cmds_type {
             commandType::navigationCommand::listItemsInDirectory(args.empty() ? fs::current_path().string() : args);
         }},
         {"cd", [](const std::string& args) {
-            printMessage("cd: Invalid format.");
+            if (args.empty()) {printMessage("cd: Invalid format."); return;}
             commandType::navigationCommand::accessDirectory(args);
         }},
         {"exec", [](const std::string& args) {
@@ -134,6 +134,24 @@ namespace cmds_type {
             std::string destination = args.substr(slashPos + 1);
 
             commandType::fileManagementCommand::duplicateFile(fileName, destination);
-        }}
+        }},
+        /*{"prop", [](const std::string& args) {
+            if (args.empty()) {printMessage("prop: Invalid format."); return;}
+
+            std::string file;
+            char option;
+
+            if (args[0] == '-') {
+                size_t spacePos = args.find(' ');
+                if (spacePos == std::string::npos) {
+                    commandType::fileManagementCommand::showFileProperties(args, ' ');
+                }
+
+                char option = args[spacePos - 1];
+                std::string fileName = args.substr(spacePos + 1);
+
+                commandType::fileManagementCommand::showFileProperties(fileName, option);
+            }
+        }}*/
     };
 }

@@ -40,16 +40,6 @@ static std::unordered_map<char, std::function<int()>> color_ = {
 namespace commandType {
     class systemCommand {
     public:
-        static void help() {
-            std::ifstream file(getFileFolder() / "HelpCommandList.txt");
-            if (file.is_open()) {
-                std::string line;
-
-                while (std::getline(file, line)) {
-                    printMessage(line);
-                }
-            }
-        }
         static void printTime() {printMessage("Current time: " + getTimestamp());};
         static void exitShell() {printMessage("Exiting shell..."); exit(0);};
         static void listCmds() {
