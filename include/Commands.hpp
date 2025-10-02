@@ -116,7 +116,7 @@ namespace cmds_type {
             commandType::fileManagementCommand::readFileContent(args);
         }},
         {"help", [](const std::string& args) {
-            if (args.empty()) {printMessage("help: Invalid format."); return;}
+            if (args.empty()) {printMessage("help: Invalid format. Usage: help <cmd>"); return;}
 
             auto it = cmds_doc.find(args);
             if (it != cmds_doc.end()) {

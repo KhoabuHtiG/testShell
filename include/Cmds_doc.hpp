@@ -13,7 +13,7 @@ static std::unordered_map<std::string, std::string> cmds_doc {
     {"whoami", "whoami\n   Display the current user"},
     {"uptime", "uptime\n   Show how long the shell has been running"},
     {"path", "path\n   Display the current working directory"},
-    {"ls", "ls<path>\n   List contents of the directory\nls -s <path>   List the contents of the directory with size of each contents"},
+    {"ls", "ls<path>\n   List contents of the directory\nls -l\n   List contents of the directory with current premission, last write time, type, size"},
     {"cd", "cd <directory>\n   Change the current directory"},
     {"exec", "exec <program>\n   Run a program or script"},
     {"color", "color <code>\n   Change the shell text color"},
