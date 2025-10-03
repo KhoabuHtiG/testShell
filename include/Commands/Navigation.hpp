@@ -85,7 +85,6 @@ static void printLong(const fs::directory_entry& entry) {
     printMessage(out.str());
 }
 
-
 namespace commandType {
     class navigationCommand {
     public:

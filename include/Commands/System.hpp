@@ -9,32 +9,29 @@ std::vector<std::string> commandList = {
     "|| rd", "|| mv", "|| dup", "prop",
 };
 static std::vector<std::string> colors {
-    "   0 = Black         8 = Gray",
-    "   1 = Blue          9 = Light Blue",
-    "   2 = Green         A = Light Green",
-    "   3 = Aqua          B = Light Aqua",
-    "   4 = Red           C = Light Red",
-    "   5 = Purple        D = Light Purple",
-    "   6 = Yellow        E = Light Yellow",
-    "   7 = White         F = Bright White",
+    "   1 = Red             9 = Bold",
+    "   2 = Yellow          A = Bright Red",
+    "   3 = Blue            B = Bright Yellow",
+    "   4 = Green           C = Light Aqua",
+    "   5 = White           D = Light Red",
+    "   6 = Cyan            E = Light Purple",
+    "   7 = Grey            F = Light Yellow",
+    "   8 = Magenta         G = Bright White",
 };
-static std::unordered_map<char, std::function<int()>> color_ = {
-    {'0', []() {return system("Color 00");}},
-    {'1', []() {return system("Color 01");}},
-    {'2', []() {return system("Color 02");}},
-    {'3', []() {return system("Color 03");}},
-    {'4', []() {return system("Color 04");}},
-    {'5', []() {return system("Color 05");}},
-    {'6', []() {return system("Color 06");}},
-    {'7', []() {return system("Color 07");}},
-    {'8', []() {return system("Color 08");}},
-    {'9', []() {return system("Color 09");}},
-    {'A', []() {return system("Color 0A");}},
-    {'B', []() {return system("Color 0B");}},
-    {'C', []() {return system("Color 0C");}},
-    {'D', []() {return system("Color 0D");}},
-    {'E', []() {return system("Color 0E");}},
-    {'F', []() {return system("Color 0F");}},
+static std::unordered_map<char, std::ostream& (*)(std::ostream&)> color_ = {
+    {'1', termcolor::red},
+    {'2', termcolor::yellow},
+    {'3', termcolor::blue},
+    {'4', termcolor::green},
+    {'5', termcolor::white},
+    {'6', termcolor::cyan},
+    {'7', termcolor::grey},
+    {'8', termcolor::magenta},
+    {'9', termcolor::bold},
+    {'a', termcolor::bright_red},
+    {'A', termcolor::bright_red},
+    {'b', termcolor::bright_yellow},
+    {'B', termcolor::bright_yellow},
 };
 
 namespace commandType {
@@ -48,10 +45,8 @@ namespace commandType {
         static void clearScreen() {
             #ifdef _WIN32
                 system("cls");
-                printMessage("Use 'cmds' to get list of commands.");
             #else
                 system("clear");
-                printMessage("Use 'cmds' to get list of commands.");
             #endif
         };
         static void whoami() {
@@ -86,8 +81,9 @@ namespace commandType {
             printMessage("Uptime: " + std::to_string(hours) + "h " + std::to_string(minutes) + "m " + std::to_string(seconds) + "s ");
         }
         static void changeTextColor(char option) {
-            if (color_.find(option) != color_.end()) {
-                color_[option]();
+            auto it = color_.find(option);
+            if (it != color_.end()) {
+                std::cout << it->second;
             } else for (int i = 0; i < colors.size(); ++i) printMessage(colors[i]);
     
             return;
