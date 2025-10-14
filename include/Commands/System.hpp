@@ -6,7 +6,7 @@ std::vector<std::string> commandList = {
     "|| ls", "|| cd", "|| cd..", "|| exec", "|| color", "|| rn",
     "|| del", "|| his", "|| phis", "|| whoami", "|| uptime",
     "|| tree", "|| touch", "|| mkdir", "|| type", "|| path",
-    "|| rd", "|| mv", "|| dup", "prop",
+    "|| rd", "|| mv", "|| dup", "|| prop",
 };
 static std::vector<std::string> colors {
     "   1 = Red             9 = Bold",
